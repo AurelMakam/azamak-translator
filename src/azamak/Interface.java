@@ -7,13 +7,12 @@ package azamak;
 
 import azamak.utils.Config;
 import azamak.utils.StrUtils;
-import java.nio.charset.StandardCharsets;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 /**
  *
- * @author EU
+ * @author Azamak
  */
 public class Interface extends javax.swing.JFrame {
 
@@ -62,7 +61,8 @@ public class Interface extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        panneauTraduction = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
@@ -75,8 +75,25 @@ public class Interface extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         yembaTxtField = new javax.swing.JTextArea();
         BtnYemba = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
+        jComboBox3 = new javax.swing.JComboBox<>();
+        panneauAdmin = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tableMot = new javax.swing.JTable();
+        BtnRetour = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        parcourirBtn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -89,7 +106,9 @@ public class Interface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(0, 0, 0));
+        jPanel4.setLayout(new java.awt.CardLayout());
+
+        panneauTraduction.setBackground(new java.awt.Color(0, 0, 0));
 
         jPanel2.setBackground(new java.awt.Color(153, 153, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED)));
@@ -112,7 +131,7 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Panneau de traduction"));
@@ -139,7 +158,7 @@ public class Interface extends javax.swing.JFrame {
         bassaTxtField.setAutoscrolls(false);
         jScrollPane2.setViewportView(bassaTxtField);
 
-        BtnBassa.setText("Traduire en Bassa");
+        BtnBassa.setText("valider");
         BtnBassa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnBassaActionPerformed(evt);
@@ -153,16 +172,22 @@ public class Interface extends javax.swing.JFrame {
         yembaTxtField.setRows(5);
         jScrollPane3.setViewportView(yembaTxtField);
 
-        BtnYemba.setText("Traduire en Yemba");
+        BtnYemba.setText("Envoyer");
         BtnYemba.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnYembaActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Ajouter au dictionnaire");
-
         jLabel2.setText("Texte en Français  :");
+
+        jLabel7.setText("Noter cette traduction : ");
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5" }));
+
+        jLabel8.setText("Noter cette traduction : ");
+
+        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5" }));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -182,20 +207,24 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(BtnBassa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(BtnYemba)))
                 .addGap(29, 29, 29))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(87, 87, 87)
-                .addComponent(BtnBassa)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BtnYemba)
-                .addGap(105, 105, 105))
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(271, 271, 271)
-                .addComponent(jButton3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,32 +240,166 @@ public class Interface extends javax.swing.JFrame {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 67, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnYemba)
-                    .addComponent(BtnBassa))
-                .addGap(18, 18, 18)
-                .addComponent(jButton3)
-                .addContainerGap(51, Short.MAX_VALUE))
+                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(BtnBassa)
+                    .addComponent(jLabel7)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panneauTraductionLayout = new javax.swing.GroupLayout(panneauTraduction);
+        panneauTraduction.setLayout(panneauTraductionLayout);
+        panneauTraductionLayout.setHorizontalGroup(
+            panneauTraductionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        panneauTraductionLayout.setVerticalGroup(
+            panneauTraductionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panneauTraductionLayout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
+
+        jPanel4.add(panneauTraduction, "card2");
+
+        tableMot.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Mot en français", "Mot traduit"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane4.setViewportView(tableMot);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        BtnRetour.setFont(new java.awt.Font("Dialog", 2, 12)); // NOI18N
+        BtnRetour.setText("<< Retour");
+        BtnRetour.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnRetourActionPerformed(evt);
+            }
+        });
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sélectionner une langue", "Yemba", "Bassa" }));
+
+        jLabel3.setText("Langue         :");
+
+        jLabel4.setText("Mot(s) en français   : ");
+
+        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jTextField2.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel5.setText("Mot(s) traduit(s)  : ");
+
+        jLabel6.setText("Charger un fichier  :");
+
+        jTextField3.setEditable(false);
+        jTextField3.setBackground(new java.awt.Color(204, 204, 204));
+
+        parcourirBtn.setText("...");
+
+        javax.swing.GroupLayout panneauAdminLayout = new javax.swing.GroupLayout(panneauAdmin);
+        panneauAdmin.setLayout(panneauAdminLayout);
+        panneauAdminLayout.setHorizontalGroup(
+            panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panneauAdminLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panneauAdminLayout.createSequentialGroup()
+                        .addComponent(BtnRetour)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panneauAdminLayout.createSequentialGroup()
+                .addContainerGap(27, Short.MAX_VALUE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(42, 42, 42))
+            .addGroup(panneauAdminLayout.createSequentialGroup()
+                .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panneauAdminLayout.createSequentialGroup()
+                        .addGap(259, 259, 259)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panneauAdminLayout.createSequentialGroup()
+                        .addGap(91, 91, 91)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(parcourirBtn)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panneauAdminLayout.setVerticalGroup(
+            panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panneauAdminLayout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
+                .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(parcourirBtn))
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BtnRetour)
+                .addGap(16, 16, 16))
+        );
+
+        jPanel4.add(panneauAdmin, "card3");
 
         jMenu1.setText("Fichier");
 
@@ -252,7 +415,7 @@ public class Interface extends javax.swing.JFrame {
 
         jMenu2.setText("Administration");
 
-        jMenuItem2.setText("Accéder");
+        jMenuItem2.setText("+ Ajout des mots");
         jMenu2.add(jMenuItem2);
 
         jMenuBar1.add(jMenu2);
@@ -273,11 +436,15 @@ public class Interface extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 765, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 427, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -285,34 +452,12 @@ public class Interface extends javax.swing.JFrame {
 
     private void BtnBassaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBassaActionPerformed
 
-        if (!"".equals(francaisTxtField.getText())) {
-            String aTraduire = francaisTxtField.getText();
-            /**
-             * - si c'est un mot, alors on lit dans le fichier de properties
-             */
-
-            if (StrUtils.estUnMot(aTraduire)) {
-                String traduire = confBassa.getProperty(aTraduire);
-                byte[] bytes = traduire.getBytes(StandardCharsets.UTF_8);
-                String utf8EncodedString = new String(bytes, StandardCharsets.UTF_8);
-                bassaTxtField.setText(utf8EncodedString);
-            }
-
-        } else {
-            francaisTxtField.setText("Vous devez remplir ici avant de cliquer !!!");
-        }
-
-        // TODO add your handling code here:
     }//GEN-LAST:event_BtnBassaActionPerformed
 
     private void BtnYembaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnYembaActionPerformed
         // TODO add your handling code here:
 
-        if (!"".equals(francaisTxtField.getText())) {
-            yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
-        } else {
-            francaisTxtField.setText("Vous devez remplir ici avant de cliquer !!!");
-        }
+        
 
     }//GEN-LAST:event_BtnYembaActionPerformed
 
@@ -320,6 +465,12 @@ public class Interface extends javax.swing.JFrame {
         // TODO add your handling code here:
         yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
     }//GEN-LAST:event_francaisTxtFieldInputMethodTextChanged
+
+    private void BtnRetourActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnRetourActionPerformed
+        // TODO add your handling code here:
+        panneauAdmin.setVisible(false);
+        panneauTraduction.setVisible(true);
+    }//GEN-LAST:event_BtnRetourActionPerformed
 
     /**
      * @param args the command line arguments
@@ -359,12 +510,21 @@ public class Interface extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnBassa;
+    private javax.swing.JButton BtnRetour;
     private javax.swing.JButton BtnYemba;
     private javax.swing.JTextArea bassaTxtField;
     private javax.swing.JTextArea francaisTxtField;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -377,10 +537,19 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JPanel panneauAdmin;
+    private javax.swing.JPanel panneauTraduction;
+    private javax.swing.JButton parcourirBtn;
+    private javax.swing.JTable tableMot;
     private javax.swing.JTextArea yembaTxtField;
     // End of variables declaration//GEN-END:variables
 }

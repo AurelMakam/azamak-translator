@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  *
- * @author EU
+ * @author Azamak
  */
 public class StrUtils {
 

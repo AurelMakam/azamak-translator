@@ -7,7 +7,7 @@ package azamak;
 
 /**
  *
- * @author EU
+ * @author Azamak
  */
 public class Main {
 
