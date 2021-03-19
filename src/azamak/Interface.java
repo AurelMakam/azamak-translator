@@ -7,8 +7,13 @@ package azamak;
 
 import azamak.utils.Config;
 import azamak.utils.StrUtils;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -26,6 +31,8 @@ public class Interface extends javax.swing.JFrame {
      */
     public Interface() {
         initComponents();
+        panneauAdmin.setVisible(false);
+        panneauTraduction.setVisible(true);
         confYemba = new Config("francais-yemba.properties");
         confBassa = new Config("francais-bassa.properties");
         francaisTxtField.getDocument().addDocumentListener(new DocumentListener() {
@@ -48,8 +55,7 @@ public class Interface extends javax.swing.JFrame {
                 bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
             }
         });
-        
-        
+
     }
 
     /**
@@ -88,12 +94,13 @@ public class Interface extends javax.swing.JFrame {
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        motFrancais = new javax.swing.JTextField();
+        motTraduit = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
         parcourirBtn = new javax.swing.JButton();
+        addWordBtn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -156,6 +163,7 @@ public class Interface extends javax.swing.JFrame {
         bassaTxtField.setForeground(new java.awt.Color(0, 0, 0));
         bassaTxtField.setRows(5);
         bassaTxtField.setAutoscrolls(false);
+        bassaTxtField.setBorder(javax.swing.BorderFactory.createTitledBorder("Traduction Bassa"));
         jScrollPane2.setViewportView(bassaTxtField);
 
         BtnBassa.setText("valider");
@@ -170,6 +178,7 @@ public class Interface extends javax.swing.JFrame {
         yembaTxtField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
         yembaTxtField.setForeground(new java.awt.Color(0, 0, 0));
         yembaTxtField.setRows(5);
+        yembaTxtField.setBorder(javax.swing.BorderFactory.createTitledBorder("Traduction Yemba"));
         jScrollPane3.setViewportView(yembaTxtField);
 
         BtnYemba.setText("Envoyer");
@@ -241,7 +250,7 @@ public class Interface extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnYemba)
@@ -266,7 +275,7 @@ public class Interface extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 1, Short.MAX_VALUE))
         );
 
         jPanel4.add(panneauTraduction, "card2");
@@ -318,14 +327,19 @@ public class Interface extends javax.swing.JFrame {
         });
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sélectionner une langue", "Yemba", "Bassa" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
 
         jLabel3.setText("Langue         :");
 
         jLabel4.setText("Mot(s) en français   : ");
 
-        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
+        motFrancais.setBackground(new java.awt.Color(255, 255, 255));
 
-        jTextField2.setBackground(new java.awt.Color(255, 255, 255));
+        motTraduit.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel5.setText("Mot(s) traduit(s)  : ");
 
@@ -335,6 +349,13 @@ public class Interface extends javax.swing.JFrame {
         jTextField3.setBackground(new java.awt.Color(204, 204, 204));
 
         parcourirBtn.setText("...");
+
+        addWordBtn.setText("Ajouter");
+        addWordBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addWordBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panneauAdminLayout = new javax.swing.GroupLayout(panneauAdmin);
         panneauAdmin.setLayout(panneauAdminLayout);
@@ -352,11 +373,11 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap(27, Short.MAX_VALUE)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(motFrancais, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(motTraduit, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(42, 42, 42))
             .addGroup(panneauAdminLayout.createSequentialGroup()
                 .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -366,10 +387,13 @@ public class Interface extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panneauAdminLayout.createSequentialGroup()
-                        .addGap(91, 91, 91)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(89, 89, 89)
+                        .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(addWordBtn)
+                            .addGroup(panneauAdminLayout.createSequentialGroup()
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addComponent(parcourirBtn)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -384,15 +408,17 @@ public class Interface extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(motFrancais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                    .addComponent(motTraduit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(addWordBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(parcourirBtn))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BtnRetour)
@@ -416,6 +442,11 @@ public class Interface extends javax.swing.JFrame {
         jMenu2.setText("Administration");
 
         jMenuItem2.setText("+ Ajout des mots");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem2);
 
         jMenuBar1.add(jMenu2);
@@ -457,7 +488,6 @@ public class Interface extends javax.swing.JFrame {
     private void BtnYembaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnYembaActionPerformed
         // TODO add your handling code here:
 
-        
 
     }//GEN-LAST:event_BtnYembaActionPerformed
 
@@ -472,10 +502,72 @@ public class Interface extends javax.swing.JFrame {
         panneauTraduction.setVisible(true);
     }//GEN-LAST:event_BtnRetourActionPerformed
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        panneauAdmin.setVisible(true);
+        panneauTraduction.setVisible(false);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        // TODO add your handling code here:
+        Map<String, String> allData;
+        Object item = evt.getItem();
+        tableMot.removeAll();
+        if (item.toString().equalsIgnoreCase("yemba")) {
+            allData = confYemba.loadAllIn();
+        } else if (item.toString().equalsIgnoreCase("bassa")) {
+            allData = confBassa.loadAllIn();
+        } else {
+            allData = new HashMap<>();
+        }
+
+        DefaultTableModel model = (DefaultTableModel) tableMot.getModel();
+        model.getDataVector().removeAllElements();
+        Set keys = allData.keySet();
+        Iterator iteratorKeys = keys.iterator();
+
+        while (iteratorKeys.hasNext()) {
+            String key = (String) iteratorKeys.next();
+            //insert on first position by pushing down the existing rows
+            //model.insertRow(0, new Object[]{key, allData.get(key)});
+            //append at the end
+            model.addRow(new Object[]{key, allData.get(key)});
+        }
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
+
+    private void addWordBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addWordBtnActionPerformed
+        // TODO add your handling code here:
+
+        Map<String, String> allData;
+        String motFr = motFrancais.getText().toLowerCase();
+        String motTr = motTraduit.getText().toLowerCase();
+        if (jComboBox1.getSelectedItem().toString().equalsIgnoreCase("yemba")) {
+            confYemba.setPropertyIn(motFr, motTr);
+            allData = confYemba.loadAllIn();
+        } else if (jComboBox1.getSelectedItem().toString().equalsIgnoreCase("bassa")) {
+            confBassa.setPropertyIn(motFr, motTr);
+            allData = confBassa.loadAllIn();
+        } else {
+            allData = new HashMap<>();
+        }
+        DefaultTableModel model = (DefaultTableModel) tableMot.getModel();
+        model.getDataVector().removeAllElements();
+        Set keys = allData.keySet();
+        Iterator iteratorKeys = keys.iterator();
+
+        while (iteratorKeys.hasNext()) {
+            String key = (String) iteratorKeys.next();
+            //insert on first position by pushing down the existing rows
+            model.insertRow(0, new Object[]{key, allData.get(key)});
+            //append at the end
+//            model.addRow(new Object[]{key, allData.get(key)});
+        }
+    }//GEN-LAST:event_addWordBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
-
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -512,6 +604,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JButton BtnBassa;
     private javax.swing.JButton BtnRetour;
     private javax.swing.JButton BtnYemba;
+    private javax.swing.JButton addWordBtn;
     private javax.swing.JTextArea bassaTxtField;
     private javax.swing.JTextArea francaisTxtField;
     private javax.swing.JComboBox<String> jComboBox1;
@@ -543,9 +636,9 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField motFrancais;
+    private javax.swing.JTextField motTraduit;
     private javax.swing.JPanel panneauAdmin;
     private javax.swing.JPanel panneauTraduction;
     private javax.swing.JButton parcourirBtn;
