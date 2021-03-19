@@ -8,7 +8,6 @@ package azamak;
 import azamak.utils.Config;
 import azamak.utils.StrUtils;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -29,24 +28,29 @@ public class Interface extends javax.swing.JFrame {
     public Interface() {
         initComponents();
         confYemba = new Config("francais-yemba.properties");
-        confBassa = new Config("francais-yemba.properties");
+        confBassa = new Config("francais-bassa.properties");
         francaisTxtField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
+                bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
                 yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
+                bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
             }
 
             @Override
             public void changedUpdate(DocumentEvent arg0) {
                 yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
+                bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
             }
         });
+        
+        
     }
 
     /**
