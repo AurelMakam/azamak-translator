@@ -35,29 +35,30 @@ public class Config {
         this.property_file = property_file;
     }
 
-    public void setProperty(String key, String value) {
-        try  {
-            Properties props;
-            try (InputStream in = Config.class.getResourceAsStream(property_file)) {
-                props = new Properties();
-                props.load(in);
-            }
-            OutputStream output = new FileOutputStream(property_file);
-            // set the properties value
-            props.setProperty(key, value);
-            // save properties to project root folder
-            props.store(output, null);
-//            System.out.println(prop);
-            output.close();
-        } catch (IOException io) {
-        }
-    }
+//    public void setProperty(String key, String value) {
+//        try {
+//            Properties props;
+//            try (InputStream in = Config.class.getResourceAsStream(property_file)) {
+//                props = new Properties();
+//                props.load(new InputStreamReader(in, "UTF-8"));
+//            }
+//            OutputStream output = new FileOutputStream(property_file);
+//            // set the properties value
+//            props.setProperty(key, value);
+//            // save properties to project root folder
+//            props.store(output, null);
+////            System.out.println(prop);
+//            output.close();
+//        } catch (IOException io) {
+//        }
+//    }
+
     public void setPropertyIn(String key, String value) {
-        try  {
+        try {
             Properties props;
             try (InputStream in = new FileInputStream(property_file)) {
                 props = new Properties();
-                props.load(in);
+                props.load(new InputStreamReader(in, "UTF-8"));
             }
             OutputStream output = new FileOutputStream(property_file);
             // set the properties value
@@ -70,15 +71,15 @@ public class Config {
         }
     }
 
-    public String getProperty(String key) {
-        try (InputStream input = Config.class.getResourceAsStream(property_file)) {
-            Properties prop = new Properties();
-            prop.load(new InputStreamReader(input, "UTF-8"));
-            return prop.getProperty(key, key);
-        } catch (IOException ex) {
-        }
-        return null;
-    }
+//    public String getProperty(String key) {
+//        try (InputStream input = Config.class.getResourceAsStream(property_file)) {
+//            Properties prop = new Properties();
+//            prop.load(new InputStreamReader(input, "UTF-8"));
+//            return prop.getProperty(key, key);
+//        } catch (IOException ex) {
+//        }
+//        return null;
+//    }
 
     public String getPropertyIn(String key) {
         try (InputStream input = new FileInputStream(property_file)) {
@@ -90,21 +91,21 @@ public class Config {
         return null;
     }
 
-    public Map<String, String> loadAll() {
-
-        try {
-            Map<String, String> result = new HashMap<>();
-            Properties p = new Properties();
-            p.load(new InputStreamReader(Config.class.getResourceAsStream(property_file), "UTF-8"));
-            p.forEach((Object key, Object value) -> {
-                result.put((String) key, (String) value);
-//                System.out.println((String) key + " = " + (String) value);
-            });
-            return result;
-        } catch (IOException ex) {
-        }
-        return null;
-    }
+//    public Map<String, String> loadAll() {
+//
+//        try {
+//            Map<String, String> result = new HashMap<>();
+//            Properties p = new Properties();
+//            p.load(new InputStreamReader(Config.class.getResourceAsStream(property_file), "UTF-8"));
+//            p.forEach((Object key, Object value) -> {
+//                result.put((String) key, (String) value);
+////                System.out.println((String) key + " = " + (String) value);
+//            });
+//            return result;
+//        } catch (IOException ex) {
+//        }
+//        return null;
+//    }
 
     public Map<String, String> loadAllIn() {
 
@@ -121,5 +122,5 @@ public class Config {
         }
         return null;
     }
-    
+
 }

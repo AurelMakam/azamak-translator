@@ -35,7 +35,7 @@ public class StrUtils {
 
     public static String translate(String s, Config conf) {
         String result = "" ;
-        Map<String, String> all = conf.loadAll();
+        Map<String, String> all = conf.loadAllIn();
         String aTraduire = s.toLowerCase();
         aTraduire = StrUtils.removeSpaces(aTraduire);
         /**
@@ -43,14 +43,18 @@ public class StrUtils {
          */
 
         if (StrUtils.estUnMot(aTraduire)) {
-            String traduire = conf.getProperty(aTraduire);
+            if(aTraduire.startsWith("l'")){
+                aTraduire = aTraduire.substring(2);
+            }
+            
+            String traduire = conf.getPropertyIn(aTraduire);
             byte[] bytes = traduire.getBytes(StandardCharsets.UTF_8);
             String utf8EncodedString = new String(bytes, StandardCharsets.UTF_8);
             result = utf8EncodedString ;
 //                yembaTxtField.setText(utf8EncodedString);
         } else {
             if (all.containsKey((String) aTraduire)) {
-                String traduire = conf.getProperty(aTraduire);
+                String traduire = conf.getPropertyIn(aTraduire);
                 byte[] bytes = traduire.getBytes(StandardCharsets.UTF_8);
                 String utf8EncodedString = new String(bytes, StandardCharsets.UTF_8);
 //                yembaTxtField.setText(utf8EncodedString);
@@ -63,13 +67,17 @@ public class StrUtils {
                     String str = tab[i];
                     if (str.equalsIgnoreCase("le") || str.equalsIgnoreCase("la")) {
                         // combiner le suivant et traduire
-                        result += " " + conf.getProperty(tab[i + 1]);
+                        result += " " + conf.getPropertyIn(tab[i + 1]);
                         i++;
                         if (i == tab.length-1) {
                             break;
                         }
-                    } else {
-                        result+= " " + conf.getProperty(str);
+                    } 
+                    else if(str.startsWith("l'")){
+                        result+= " " + conf.getPropertyIn(str.substring(2));
+                    }
+                    else {
+                        result+= " " + conf.getPropertyIn(str);
                     }
                 }
                 

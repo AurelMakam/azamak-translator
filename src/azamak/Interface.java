@@ -7,12 +7,24 @@ package azamak;
 
 import azamak.utils.Config;
 import azamak.utils.StrUtils;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -23,6 +35,7 @@ public class Interface extends javax.swing.JFrame {
 
     public Config confYemba;
     public Config confBassa;
+    public static String fileToUpload = "";
 //    public Map<String, String> allYemba;
 //    public Map<String, String> allBassa;
 
@@ -31,6 +44,8 @@ public class Interface extends javax.swing.JFrame {
      */
     public Interface() {
         initComponents();
+        parcourirBtn.setEnabled(false);
+        addWordBtn.setEnabled(false);
         panneauAdmin.setVisible(false);
         panneauTraduction.setVisible(true);
         confYemba = new Config("francais-yemba.properties");
@@ -71,6 +86,7 @@ public class Interface extends javax.swing.JFrame {
         panneauTraduction = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         francaisTxtField = new javax.swing.JTextArea();
@@ -91,16 +107,17 @@ public class Interface extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         tableMot = new javax.swing.JTable();
         BtnRetour = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        choixLangueCmb = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         motFrancais = new javax.swing.JTextField();
         motTraduit = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        fileToImportTxf = new javax.swing.JTextField();
         parcourirBtn = new javax.swing.JButton();
         addWordBtn = new javax.swing.JButton();
+        importbtn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -120,9 +137,13 @@ public class Interface extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(153, 153, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED)));
 
-        jLabel1.setFont(new java.awt.Font("Cambria", 1, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Cambria", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("Bienvenue dans votre traducteur multilingue :-)");
+        jLabel1.setText("AZAMAK");
+
+        jLabel9.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("( Votre traducteur multilingue)");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -130,15 +151,19 @@ public class Interface extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(114, 114, 114))
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(jLabel9))
+                .addContainerGap())
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Panneau de traduction"));
@@ -208,7 +233,7 @@ public class Interface extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jSeparator1))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
+                        .addGap(61, 61, 61)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -240,16 +265,17 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(72, 72, 72)
+                        .addComponent(jLabel2)
+                        .addGap(53, 53, 53))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(52, 52, 52)
-                        .addComponent(jLabel2)))
-                .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)))
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -259,7 +285,7 @@ public class Interface extends javax.swing.JFrame {
                     .addComponent(BtnBassa)
                     .addComponent(jLabel7)
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout panneauTraductionLayout = new javax.swing.GroupLayout(panneauTraduction);
@@ -274,8 +300,7 @@ public class Interface extends javax.swing.JFrame {
             .addGroup(panneauTraductionLayout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 1, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel4.add(panneauTraduction, "card2");
@@ -314,7 +339,7 @@ public class Interface extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -326,10 +351,10 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sélectionner une langue", "Yemba", "Bassa" }));
-        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+        choixLangueCmb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sélectionner une langue", "Yemba", "Bassa" }));
+        choixLangueCmb.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jComboBox1ItemStateChanged(evt);
+                choixLangueCmbItemStateChanged(evt);
             }
         });
 
@@ -345,15 +370,27 @@ public class Interface extends javax.swing.JFrame {
 
         jLabel6.setText("Charger un fichier  :");
 
-        jTextField3.setEditable(false);
-        jTextField3.setBackground(new java.awt.Color(204, 204, 204));
+        fileToImportTxf.setEditable(false);
+        fileToImportTxf.setBackground(new java.awt.Color(204, 204, 204));
 
         parcourirBtn.setText("...");
+        parcourirBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                parcourirBtnActionPerformed(evt);
+            }
+        });
 
         addWordBtn.setText("Ajouter");
         addWordBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addWordBtnActionPerformed(evt);
+            }
+        });
+
+        importbtn.setText("importer");
+        importbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importbtnActionPerformed(evt);
             }
         });
 
@@ -369,41 +406,43 @@ public class Interface extends javax.swing.JFrame {
                         .addComponent(BtnRetour)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(panneauAdminLayout.createSequentialGroup()
+                .addGap(259, 259, 259)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(choixLangueCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panneauAdminLayout.createSequentialGroup()
                 .addContainerGap(27, Short.MAX_VALUE)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(motFrancais, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(motTraduit, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42))
-            .addGroup(panneauAdminLayout.createSequentialGroup()
                 .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panneauAdminLayout.createSequentialGroup()
-                        .addGap(259, 259, 259)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panneauAdminLayout.createSequentialGroup()
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(fileToImportTxf, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(parcourirBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(importbtn)
+                        .addGap(71, 71, 71))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panneauAdminLayout.createSequentialGroup()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panneauAdminLayout.createSequentialGroup()
-                        .addGap(89, 89, 89)
-                        .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(motFrancais, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(addWordBtn)
                             .addGroup(panneauAdminLayout.createSequentialGroup()
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addComponent(parcourirBtn)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(motTraduit, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(42, 42, 42))))
         );
         panneauAdminLayout.setVerticalGroup(
             panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panneauAdminLayout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(choixLangueCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(18, 18, 18)
                 .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -416,8 +455,9 @@ public class Interface extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panneauAdminLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(parcourirBtn))
+                    .addComponent(fileToImportTxf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(parcourirBtn)
+                    .addComponent(importbtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -441,6 +481,7 @@ public class Interface extends javax.swing.JFrame {
 
         jMenu2.setText("Administration");
 
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem2.setText("+ Ajout des mots");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -473,7 +514,7 @@ public class Interface extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 427, Short.MAX_VALUE)
+            .addGap(0, 432, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -509,17 +550,23 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
 
-    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+    private void choixLangueCmbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_choixLangueCmbItemStateChanged
         // TODO add your handling code here:
         Map<String, String> allData;
         Object item = evt.getItem();
         tableMot.removeAll();
         if (item.toString().equalsIgnoreCase("yemba")) {
             allData = confYemba.loadAllIn();
+            parcourirBtn.setEnabled(true);
+            addWordBtn.setEnabled(true);
         } else if (item.toString().equalsIgnoreCase("bassa")) {
             allData = confBassa.loadAllIn();
+            parcourirBtn.setEnabled(true);
+            addWordBtn.setEnabled(true);
         } else {
             allData = new HashMap<>();
+            parcourirBtn.setEnabled(false);
+            addWordBtn.setEnabled(false);
         }
 
         DefaultTableModel model = (DefaultTableModel) tableMot.getModel();
@@ -534,7 +581,7 @@ public class Interface extends javax.swing.JFrame {
             //append at the end
             model.addRow(new Object[]{key, allData.get(key)});
         }
-    }//GEN-LAST:event_jComboBox1ItemStateChanged
+    }//GEN-LAST:event_choixLangueCmbItemStateChanged
 
     private void addWordBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addWordBtnActionPerformed
         // TODO add your handling code here:
@@ -542,11 +589,22 @@ public class Interface extends javax.swing.JFrame {
         Map<String, String> allData;
         String motFr = motFrancais.getText().toLowerCase();
         String motTr = motTraduit.getText().toLowerCase();
-        if (jComboBox1.getSelectedItem().toString().equalsIgnoreCase("yemba")) {
-            confYemba.setPropertyIn(motFr, motTr);
+        if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("yemba")) {
+            if (motFr.equalsIgnoreCase(confYemba.getPropertyIn(motFr))) {
+                confYemba.setPropertyIn(motFr, motTr);
+                System.out.println("get yemba de " + motFr + " = " + confYemba.getPropertyIn(motFr));
+            } else {
+                JOptionPane.showMessageDialog(this, "Ce mot existe déjà dans le dictionnaire");
+            }
             allData = confYemba.loadAllIn();
-        } else if (jComboBox1.getSelectedItem().toString().equalsIgnoreCase("bassa")) {
-            confBassa.setPropertyIn(motFr, motTr);
+
+        } else if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("bassa")) {
+            if (motFr.equalsIgnoreCase(confBassa.getPropertyIn(motFr))) {
+                confBassa.setPropertyIn(motFr, motTr);
+                System.out.println("get yemba de " + motFr + " = " + confBassa.getPropertyIn(motFr));
+            } else {
+                JOptionPane.showMessageDialog(this, "Ce mot existe déjà dans le dictionnaire");
+            }
             allData = confBassa.loadAllIn();
         } else {
             allData = new HashMap<>();
@@ -564,6 +622,71 @@ public class Interface extends javax.swing.JFrame {
 //            model.addRow(new Object[]{key, allData.get(key)});
         }
     }//GEN-LAST:event_addWordBtnActionPerformed
+
+    private void importbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importbtnActionPerformed
+        // TODO add your handling code here:
+        if (!"".equals(fileToUpload)) {
+            Map<String, String> allData = null;
+            FileReader fr = null;
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileToUpload), "UTF8"))) {
+                System.out.println("selected = "+choixLangueCmb.getSelectedItem());
+                String line;
+                if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("yemba")) {
+                    while ((line = br.readLine()) != null) {
+                        String[] tab = line.split("=");
+                        if (tab.length == 2) {
+                            confYemba.setPropertyIn(tab[0], tab[1]);
+                        } else {
+                            System.out.println("ligne " + line + " ignorée");
+                        }
+                    }
+                    br.close();    //closes the stream and release the resources 
+                    allData = confYemba.loadAllIn();
+                } else if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("bassa")) {
+                    while ((line = br.readLine()) != null) {
+                        String[] tab = line.split("=");
+                        if (tab.length == 2) {
+                            confBassa.setPropertyIn(tab[0], tab[1]);
+                        } else {
+                            System.out.println("ligne " + line + " ignorée");
+                        }
+                    }
+                    br.close();
+                    allData = confBassa.loadAllIn();
+                }
+                DefaultTableModel model = (DefaultTableModel) tableMot.getModel();
+                model.getDataVector().removeAllElements();
+                Set keys = allData.keySet();
+                Iterator iteratorKeys = keys.iterator();
+                while (iteratorKeys.hasNext()) {
+                    String key = (String) iteratorKeys.next();
+                    model.insertRow(0, new Object[]{key, allData.get(key)});
+                }
+                JOptionPane.showMessageDialog(this, "Importation terminée !!!");
+                fileToUpload = "";
+                fileToImportTxf.setText("");
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+        }
+
+    }//GEN-LAST:event_importbtnActionPerformed
+
+    private void parcourirBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parcourirBtnActionPerformed
+        // TODO add your handling code here:
+        JFileChooser jfc = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichier texte", "txt");
+        FileNameExtensionFilter filter2 = new FileNameExtensionFilter("Fichier properties", "properties");
+        jfc.setFileFilter(filter);
+        int returnVal = jfc.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = jfc.getSelectedFile();
+            fileToUpload = file.getAbsolutePath();
+            fileToImportTxf.setText(fileToUpload);
+        }
+    }//GEN-LAST:event_parcourirBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -606,8 +729,10 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JButton BtnYemba;
     private javax.swing.JButton addWordBtn;
     private javax.swing.JTextArea bassaTxtField;
+    private javax.swing.JComboBox<String> choixLangueCmb;
+    private javax.swing.JTextField fileToImportTxf;
     private javax.swing.JTextArea francaisTxtField;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton importbtn;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel1;
@@ -618,6 +743,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -636,7 +762,6 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField motFrancais;
     private javax.swing.JTextField motTraduit;
     private javax.swing.JPanel panneauAdmin;
