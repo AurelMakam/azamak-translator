@@ -7,6 +7,14 @@ package azamak;
 
 import azamak.utils.Config;
 import azamak.utils.StrUtils;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.List;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,18 +22,27 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
 
 /**
  *
@@ -36,8 +53,9 @@ public class Interface extends javax.swing.JFrame {
     public Config confYemba;
     public Config confBassa;
     public static String fileToUpload = "";
-//    public Map<String, String> allYemba;
-//    public Map<String, String> allBassa;
+    public static ArrayList<String> allWords;
+    public Map<String, String> allYembaWords;
+    public Map<String, String> allBassaWords;
 
     /**
      * Creates new form Interface
@@ -50,6 +68,11 @@ public class Interface extends javax.swing.JFrame {
         panneauTraduction.setVisible(true);
         confYemba = new Config("francais-yemba.properties");
         confBassa = new Config("francais-bassa.properties");
+        allYembaWords = confYemba.loadAllIn();
+        allBassaWords = confBassa.loadAllIn();
+        Set<String> set = new LinkedHashSet<>(allYembaWords.keySet());
+        set.addAll(allBassaWords.keySet());
+        allWords = new ArrayList<>(set);
         francaisTxtField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
@@ -60,6 +83,7 @@ public class Interface extends javax.swing.JFrame {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
+
                 yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
                 bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
             }
@@ -68,6 +92,22 @@ public class Interface extends javax.swing.JFrame {
             public void changedUpdate(DocumentEvent arg0) {
                 yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
                 bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
+            }
+
+            public void keyReleased(KeyEvent e) {
+                popupmenu.removeAll();
+                popupmenu.add(new JMenuItem("bonjour"));
+//                Rectangle rectangle = francaisTxtField.modelToView( francaisTxtField.getCaretPostion() );
+                Caret caret = francaisTxtField.getCaret();
+
+                Point p = caret.getMagicCaretPosition();
+                System.out.println(" point = " + p.hashCode());
+//                p.x += francaisTxtField.getLocationOnScreen().x;
+//                p.y += francaisTxtField.getLocationOnScreen().y;
+                System.out.println("x = " + ((int) p.getX()) + " y = " + ((int) p.getY()));
+                popupmenu.show(francaisTxtField, (int) p.x, (int) p.y);
+                popupmenu.requestFocus();
+                popupmenu.grabFocus();
             }
         });
 
@@ -82,6 +122,7 @@ public class Interface extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        popupmenu = new javax.swing.JPopupMenu();
         jPanel4 = new javax.swing.JPanel();
         panneauTraduction = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -178,6 +219,11 @@ public class Interface extends javax.swing.JFrame {
             }
             public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
                 francaisTxtFieldInputMethodTextChanged(evt);
+            }
+        });
+        francaisTxtField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                francaisTxtFieldKeyReleased(evt);
             }
         });
         jScrollPane1.setViewportView(francaisTxtField);
@@ -629,7 +675,7 @@ public class Interface extends javax.swing.JFrame {
             Map<String, String> allData = null;
             FileReader fr = null;
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileToUpload), "UTF8"))) {
-                System.out.println("selected = "+choixLangueCmb.getSelectedItem());
+                System.out.println("selected = " + choixLangueCmb.getSelectedItem());
                 String line;
                 if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("yemba")) {
                     while ((line = br.readLine()) != null) {
@@ -669,7 +715,7 @@ public class Interface extends javax.swing.JFrame {
                 Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
-            } 
+            }
         }
 
     }//GEN-LAST:event_importbtnActionPerformed
@@ -687,6 +733,46 @@ public class Interface extends javax.swing.JFrame {
             fileToImportTxf.setText(fileToUpload);
         }
     }//GEN-LAST:event_parcourirBtnActionPerformed
+
+    private void francaisTxtFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_francaisTxtFieldKeyReleased
+        // TODO add your handling code here:
+//        String motEnCours = "";
+        if (!"".equals(francaisTxtField.getText())) {
+            String[] tableauDesMots = francaisTxtField.getText().split(" ");
+            String debutPhrase = "";
+            for(int i=0; i<tableauDesMots.length-1; i++){
+                debutPhrase += tableauDesMots[i]+ " ";
+            }
+            final String debut = debutPhrase;
+            final String motEnCours = tableauDesMots[tableauDesMots.length - 1];
+            if (motEnCours.length() >= 3) {
+//                String[] obj = (String[]) allWords.stream()
+//                        .filter(c -> c.startsWith(motEnCours))
+//                        .collect(Collectors.toList()).toArray();
+//                ArrayList<String> list = new ArrayList();
+//                Collections.addAll(list, obj);
+                popupmenu.removeAll();
+                allWords.forEach((String s) -> {
+                    if (s.startsWith(motEnCours) ) {
+                        JMenuItem item = new JMenuItem(s) ;
+                        popupmenu.add(item);
+                        item.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                francaisTxtField.setText(debut + e.getActionCommand());
+                            }
+                        });
+                    }
+                });
+                Caret caret = francaisTxtField.getCaret();
+                Point p = caret.getMagicCaretPosition();
+                popupmenu.show(francaisTxtField, (int) p.x, (int) p.y);
+                popupmenu.requestFocus(false);
+//                popupmenu.requestFocus();
+//                popupmenu.grabFocus();
+            }
+        }
+    }//GEN-LAST:event_francaisTxtFieldKeyReleased
 
     /**
      * @param args the command line arguments
@@ -767,6 +853,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JPanel panneauAdmin;
     private javax.swing.JPanel panneauTraduction;
     private javax.swing.JButton parcourirBtn;
+    private javax.swing.JPopupMenu popupmenu;
     private javax.swing.JTable tableMot;
     private javax.swing.JTextArea yembaTxtField;
     // End of variables declaration//GEN-END:variables
