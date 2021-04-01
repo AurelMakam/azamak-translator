@@ -5,6 +5,7 @@
  */
 package azamak;
 
+import azamak.tts.TextToSpeech;
 import azamak.utils.Config;
 import azamak.utils.StrUtils;
 import java.awt.Font;
@@ -30,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -43,6 +45,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
+import marytts.signalproc.effects.JetPilotEffect;
+import marytts.signalproc.effects.LpcWhisperiserEffect;
+import marytts.signalproc.effects.RobotiserEffect;
+import marytts.signalproc.effects.StadiumEffect;
+import marytts.signalproc.effects.VocalTractLinearScalerEffect;
+import marytts.signalproc.effects.VolumeEffect;
 
 /**
  *
@@ -139,10 +147,8 @@ public class Interface extends javax.swing.JFrame {
         yembaTxtField = new javax.swing.JTextArea();
         BtnYemba = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jLabel8 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox<>();
+        volumeYemba = new javax.swing.JSlider();
+        volumeBassa = new javax.swing.JSlider();
         panneauAdmin = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -237,7 +243,7 @@ public class Interface extends javax.swing.JFrame {
         bassaTxtField.setBorder(javax.swing.BorderFactory.createTitledBorder("Traduction Bassa"));
         jScrollPane2.setViewportView(bassaTxtField);
 
-        BtnBassa.setText("valider");
+        BtnBassa.setText("Lire...");
         BtnBassa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnBassaActionPerformed(evt);
@@ -252,7 +258,7 @@ public class Interface extends javax.swing.JFrame {
         yembaTxtField.setBorder(javax.swing.BorderFactory.createTitledBorder("Traduction Yemba"));
         jScrollPane3.setViewportView(yembaTxtField);
 
-        BtnYemba.setText("Envoyer");
+        BtnYemba.setText("Lire...");
         BtnYemba.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnYembaActionPerformed(evt);
@@ -261,13 +267,15 @@ public class Interface extends javax.swing.JFrame {
 
         jLabel2.setText("Texte en Français  :");
 
-        jLabel7.setText("Noter cette traduction : ");
+        volumeYemba.setPaintLabels(true);
+        volumeYemba.setPaintTicks(true);
+        volumeYemba.setToolTipText("Volume");
+        volumeYemba.setValue(0);
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5" }));
-
-        jLabel8.setText("Noter cette traduction : ");
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0", "1", "2", "3", "4", "5" }));
+        volumeBassa.setPaintLabels(true);
+        volumeBassa.setPaintTicks(true);
+        volumeBassa.setToolTipText("Volume");
+        volumeBassa.setValue(0);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -287,24 +295,24 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(BtnBassa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(volumeBassa, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(157, 157, 157)
+                        .addComponent(BtnYemba)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(BtnBassa)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
-                        .addComponent(BtnYemba)))
-                .addGap(29, 29, 29))
+                        .addComponent(volumeYemba, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -324,13 +332,12 @@ public class Interface extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BtnYemba)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8)
-                    .addComponent(BtnBassa)
-                    .addComponent(jLabel7)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(BtnYemba)
+                        .addComponent(BtnBassa))
+                    .addComponent(volumeYemba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(volumeBassa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
@@ -569,11 +576,31 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnBassaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBassaActionPerformed
-
+        if (!"".equals(bassaTxtField.getText())) {
+            if(volumeBassa.getValue() != 0){
+            BtnBassa.setEnabled(false);
+            readText(bassaTxtField.getText(), volumeBassa.getValue());
+            BtnBassa.setEnabled(true);
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Bien vouloir augmenter le volume"); 
+            }
+        }
     }//GEN-LAST:event_BtnBassaActionPerformed
 
     private void BtnYembaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnYembaActionPerformed
         // TODO add your handling code here:
+        // lire en Yemba ŋ
+        if (!"".equals(yembaTxtField.getText())) {
+            if(volumeYemba.getValue() != 0){
+            BtnYemba.setEnabled(false);
+            readText(yembaTxtField.getText(), volumeYemba.getValue());
+            BtnYemba.setEnabled(true);
+            }
+            else{
+                JOptionPane.showMessageDialog(this, "Bien vouloir augmenter le volume"); 
+            }
+        }
 
 
     }//GEN-LAST:event_BtnYembaActionPerformed
@@ -582,7 +609,72 @@ public class Interface extends javax.swing.JFrame {
         // TODO add your handling code here:
         yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
     }//GEN-LAST:event_francaisTxtFieldInputMethodTextChanged
+    
+    private void readText(String text, int volume) {
+        TextToSpeech tts = new TextToSpeech();
+        //=========================================================================
+        //======================= Print available AUDIO EFFECTS ====================
+        //=========================================================================
 
+        //Print all the available audio effects
+//        tts.getAudioEffects().stream().forEach(audioEffect -> {
+//            System.out.println("-----Name-----");
+//            System.out.println(audioEffect.getName());
+//            System.out.println("-----Examples-----");
+//            System.out.println(audioEffect.getExampleParameters());
+//            System.out.println("-----Help Text------");
+//            System.out.println(audioEffect.getHelpText() + "\n\n");
+//
+//        });
+
+        //=========================================================================
+        //========================= Print available voices =========================
+        //=========================================================================
+        //Print all the available voices
+        tts.getAvailableVoices().stream().forEach(voice -> System.out.println("Voice: " + voice));
+
+        // Setting the Current Voice
+        tts.setVoice("cmu-rms-hsmm");
+
+        //=========================================================================
+        //========================= Let's try different effects=====================
+        //=========================================================================
+        //----- Hey you !-> check the help that is being printed on the console
+        //----- You will understand how to use the effects better :)
+        //VocalTractLinearScalerEffect
+//        VocalTractLinearScalerEffect vocalTractLSE = new VocalTractLinearScalerEffect(); //russian drunk effect
+//        vocalTractLSE.setParams("amount:70");
+//
+//        //JetPilotEffect
+//        JetPilotEffect jetPilotEffect = new JetPilotEffect(); //epic fun!!!
+//        jetPilotEffect.setParams("amount:100");
+//
+//        //RobotiserEffect
+//        RobotiserEffect robotiserEffect = new RobotiserEffect();
+//        robotiserEffect.setParams("amount:50");
+
+        //StadiumEffect
+        StadiumEffect stadiumEffect = new StadiumEffect();
+        stadiumEffect.setParams("amount:" + volume);
+
+        //LpcWhisperiserEffect
+//        LpcWhisperiserEffect lpcWhisperiserEffect = new LpcWhisperiserEffect(); //creepy
+//        lpcWhisperiserEffect.setParams("amount:70");
+//
+//        //VolumeEffect
+//        VolumeEffect volumeEffect = new VolumeEffect(); //be careful with this i almost got heart attack
+//        volumeEffect.setParams("amount:0");
+
+        //Apply the effects
+        //----You can add multiple effects by using the method `getFullEffectAsString()` and + symbol to connect with the other effect that you want
+        //----check the example below
+        tts.getMarytts().setAudioEffects(stadiumEffect.getFullEffectAsString());// + "+" + stadiumEffect.getFullEffectAsString());
+
+        //=========================================================================
+        //===================== Now let's troll user ==============================
+        //=========================================================================
+        tts.speak(text, 2.0f, false, true);
+    }
     private void BtnRetourActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnRetourActionPerformed
         // TODO add your handling code here:
         panneauAdmin.setVisible(false);
@@ -737,11 +829,11 @@ public class Interface extends javax.swing.JFrame {
     private void francaisTxtFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_francaisTxtFieldKeyReleased
         // TODO add your handling code here:
 //        String motEnCours = "";
-        if (!"".equals(francaisTxtField.getText())) {
+        if (!"".equals(francaisTxtField.getText()) && !francaisTxtField.getText().endsWith(" ")) {
             String[] tableauDesMots = francaisTxtField.getText().split(" ");
             String debutPhrase = "";
-            for(int i=0; i<tableauDesMots.length-1; i++){
-                debutPhrase += tableauDesMots[i]+ " ";
+            for (int i = 0; i < tableauDesMots.length - 1; i++) {
+                debutPhrase += tableauDesMots[i] + " ";
             }
             final String debut = debutPhrase;
             final String motEnCours = tableauDesMots[tableauDesMots.length - 1];
@@ -753,23 +845,22 @@ public class Interface extends javax.swing.JFrame {
 //                Collections.addAll(list, obj);
                 popupmenu.removeAll();
                 allWords.forEach((String s) -> {
-                    if (s.startsWith(motEnCours) ) {
-                        JMenuItem item = new JMenuItem(s) ;
+                    if (s.startsWith(motEnCours)) {
+                        JMenuItem item = new JMenuItem(s);
                         popupmenu.add(item);
-                        item.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                francaisTxtField.setText(debut + e.getActionCommand());
-                            }
+                        item.addActionListener((ActionEvent e) -> {
+                            francaisTxtField.setText(debut + e.getActionCommand());
                         });
                     }
                 });
-                Caret caret = francaisTxtField.getCaret();
-                Point p = caret.getMagicCaretPosition();
-                popupmenu.show(francaisTxtField, (int) p.x, (int) p.y);
-                popupmenu.requestFocus(false);
+                if (popupmenu.getSubElements().length != 0) {
+                    Caret caret = francaisTxtField.getCaret();
+                    Point p = caret.getMagicCaretPosition();
+                    popupmenu.show(francaisTxtField, (int) p.x, (int) p.y);
+//                    popupmenu.requestFocus(false);
 //                popupmenu.requestFocus();
 //                popupmenu.grabFocus();
+                }
             }
         }
     }//GEN-LAST:event_francaisTxtFieldKeyReleased
@@ -819,16 +910,12 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JTextField fileToImportTxf;
     private javax.swing.JTextArea francaisTxtField;
     private javax.swing.JButton importbtn;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -855,6 +942,8 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JButton parcourirBtn;
     private javax.swing.JPopupMenu popupmenu;
     private javax.swing.JTable tableMot;
+    private javax.swing.JSlider volumeBassa;
+    private javax.swing.JSlider volumeYemba;
     private javax.swing.JTextArea yembaTxtField;
     // End of variables declaration//GEN-END:variables
 }
