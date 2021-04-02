@@ -123,4 +123,16 @@ public class Config {
         return null;
     }
 
+    public void printAll(){
+        try {
+            Properties p = new Properties();
+            p.load(new InputStreamReader(new FileInputStream(property_file), "UTF-8"));
+            p.forEach((Object key, Object value) -> {
+//                result.put((String) key, (String) value);
+                System.out.println((String) key + " = " + (String) value);
+            });
+            
+        } catch (IOException ex) {
+        }
+    }
 }

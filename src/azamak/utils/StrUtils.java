@@ -34,7 +34,7 @@ public class StrUtils {
     }
 
     public static String translate(String s, Config conf) {
-        String result = "" ;
+        String result = "";
         Map<String, String> all = conf.loadAllIn();
         String aTraduire = s.toLowerCase();
         aTraduire = StrUtils.removeSpaces(aTraduire);
@@ -43,14 +43,14 @@ public class StrUtils {
          */
 
         if (StrUtils.estUnMot(aTraduire)) {
-            if(aTraduire.startsWith("l'")){
+            if (aTraduire.startsWith("l'")) {
                 aTraduire = aTraduire.substring(2);
             }
-            
+
             String traduire = conf.getPropertyIn(aTraduire);
             byte[] bytes = traduire.getBytes(StandardCharsets.UTF_8);
             String utf8EncodedString = new String(bytes, StandardCharsets.UTF_8);
-            result = utf8EncodedString ;
+            result = utf8EncodedString;
 //                yembaTxtField.setText(utf8EncodedString);
         } else {
             if (all.containsKey((String) aTraduire)) {
@@ -58,33 +58,31 @@ public class StrUtils {
                 byte[] bytes = traduire.getBytes(StandardCharsets.UTF_8);
                 String utf8EncodedString = new String(bytes, StandardCharsets.UTF_8);
 //                yembaTxtField.setText(utf8EncodedString);
-                result = utf8EncodedString ;
+                result = utf8EncodedString;
             } else {
                 //decouper et traduire
                 String[] tab = aTraduire.split(" ");
-                
-                for (int i = 0; i < tab.length ; i++) {
+
+                for (int i = 0; i < tab.length; i++) {
                     String str = tab[i];
                     if (str.equalsIgnoreCase("le") || str.equalsIgnoreCase("la")) {
                         // combiner le suivant et traduire
-                        result += " " + conf.getPropertyIn(tab[i + 1]);
-                        i++;
-                        if (i == tab.length-1) {
+                        if (i < tab.length-1) {
+                            result += " " + conf.getPropertyIn(tab[i + 1]);
+                            i++;
+                        }
+                        if (i == tab.length - 1) {
                             break;
                         }
-                    } 
-                    else if(str.startsWith("l'")){
-                        result+= " " + conf.getPropertyIn(str.substring(2));
-                    }
-                    else {
-                        result+= " " + conf.getPropertyIn(str);
+                    } else if (str.startsWith("l'")) {
+                        result += " " + conf.getPropertyIn(str.substring(2));
+                    } else {
+                        result += " " + conf.getPropertyIn(str);
                     }
                 }
-                
                 result = removeSpaces(result);
             }
-
         }
-        return result ;
+        return result;
     }
 }

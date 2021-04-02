@@ -20,9 +20,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -58,12 +63,16 @@ import marytts.signalproc.effects.VolumeEffect;
  */
 public class Interface extends javax.swing.JFrame {
 
-    public Config confYemba;
-    public Config confBassa;
+//    public Config confYemba;
+//    public Config confBassa;
+    public Config conf;
+    public Config confTraduction;
+    public Config confAjout;
     public static String fileToUpload = "";
     public static ArrayList<String> allWords;
-    public Map<String, String> allYembaWords;
-    public Map<String, String> allBassaWords;
+    public Map<String, String> allWordsWithTraduction;
+//    public Map<String, String> allBassaWords;
+    public Map<String, String> allLanguages;
 
     /**
      * Creates new form Interface
@@ -74,48 +83,44 @@ public class Interface extends javax.swing.JFrame {
         addWordBtn.setEnabled(false);
         panneauAdmin.setVisible(false);
         panneauTraduction.setVisible(true);
-        confYemba = new Config("francais-yemba.properties");
-        confBassa = new Config("francais-bassa.properties");
-        allYembaWords = confYemba.loadAllIn();
-        allBassaWords = confBassa.loadAllIn();
-        Set<String> set = new LinkedHashSet<>(allYembaWords.keySet());
-        set.addAll(allBassaWords.keySet());
-        allWords = new ArrayList<>(set);
+//        confYemba = new Config("francais-yemba.properties");
+//        confBassa = new Config("francais-bassa.properties");
+        conf = new Config("langues.properties");
+        allLanguages = conf.loadAllIn();
+
+        allLanguages.forEach((String key, String value) -> {
+            comboLangue.addItem(key);
+            choixLangueCmb.addItem(key);
+        });
+
+//        allYembaWords = confYemba.loadAllIn();
+//        allBassaWords = confBassa.loadAllIn();
+//        Set<String> set = new LinkedHashSet<>(allYembaWords.keySet());
+//        set.addAll(allBassaWords.keySet());
+//        allWords = new ArrayList<>(set);
         francaisTxtField.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
-                bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
+                if (comboLangue.getSelectedIndex() != 0) {
+                    translateTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confTraduction));
+                }
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
+                if (comboLangue.getSelectedIndex() != 0) {
+                    translateTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confTraduction));
+                }
 
-                yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
-                bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
             }
 
             @Override
             public void changedUpdate(DocumentEvent arg0) {
-                yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
-                bassaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confBassa));
-            }
+                if (comboLangue.getSelectedIndex() != 0) {
+                    translateTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confTraduction));
+                }
 
-            public void keyReleased(KeyEvent e) {
-                popupmenu.removeAll();
-                popupmenu.add(new JMenuItem("bonjour"));
-//                Rectangle rectangle = francaisTxtField.modelToView( francaisTxtField.getCaretPostion() );
-                Caret caret = francaisTxtField.getCaret();
-
-                Point p = caret.getMagicCaretPosition();
-                System.out.println(" point = " + p.hashCode());
-//                p.x += francaisTxtField.getLocationOnScreen().x;
-//                p.y += francaisTxtField.getLocationOnScreen().y;
-                System.out.println("x = " + ((int) p.getX()) + " y = " + ((int) p.getY()));
-                popupmenu.show(francaisTxtField, (int) p.x, (int) p.y);
-                popupmenu.requestFocus();
-                popupmenu.grabFocus();
             }
         });
 
@@ -131,6 +136,13 @@ public class Interface extends javax.swing.JFrame {
     private void initComponents() {
 
         popupmenu = new javax.swing.JPopupMenu();
+        dialogAddLangue = new javax.swing.JDialog();
+        jLabel10 = new javax.swing.JLabel();
+        nomLangueTxf = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        btnParcourir = new javax.swing.JButton();
+        cheminAddLangueTxf = new javax.swing.JTextField();
+        btnAddLangue = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         panneauTraduction = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -140,15 +152,15 @@ public class Interface extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         francaisTxtField = new javax.swing.JTextArea();
         jSeparator1 = new javax.swing.JSeparator();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        bassaTxtField = new javax.swing.JTextArea();
-        BtnBassa = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        yembaTxtField = new javax.swing.JTextArea();
-        BtnYemba = new javax.swing.JButton();
+        translateTxtField = new javax.swing.JTextArea();
+        BtnLire = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        volumeYemba = new javax.swing.JSlider();
-        volumeBassa = new javax.swing.JSlider();
+        volumeTranslate = new javax.swing.JSlider();
+        jLabel7 = new javax.swing.JLabel();
+        comboLangue = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
         panneauAdmin = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -171,9 +183,72 @@ public class Interface extends javax.swing.JFrame {
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
+
+        jLabel10.setText("Nom Langue (sans espace)  :");
+
+        nomLangueTxf.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel11.setText("Fichier de config.                      :");
+
+        btnParcourir.setText("...");
+        btnParcourir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnParcourirActionPerformed(evt);
+            }
+        });
+
+        cheminAddLangueTxf.setEditable(false);
+
+        btnAddLangue.setText("Ajouter");
+        btnAddLangue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddLangueActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout dialogAddLangueLayout = new javax.swing.GroupLayout(dialogAddLangue.getContentPane());
+        dialogAddLangue.getContentPane().setLayout(dialogAddLangueLayout);
+        dialogAddLangueLayout.setHorizontalGroup(
+            dialogAddLangueLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialogAddLangueLayout.createSequentialGroup()
+                .addGroup(dialogAddLangueLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(dialogAddLangueLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addGroup(dialogAddLangueLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(dialogAddLangueLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(dialogAddLangueLayout.createSequentialGroup()
+                                .addComponent(cheminAddLangueTxf, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnParcourir))
+                            .addComponent(nomLangueTxf, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(dialogAddLangueLayout.createSequentialGroup()
+                        .addGap(179, 179, 179)
+                        .addComponent(btnAddLangue)))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+        dialogAddLangueLayout.setVerticalGroup(
+            dialogAddLangueLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialogAddLangueLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addGroup(dialogAddLangueLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nomLangueTxf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(dialogAddLangueLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnParcourir)
+                    .addComponent(cheminAddLangueTxf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAddLangue)
+                .addContainerGap(15, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -220,6 +295,7 @@ public class Interface extends javax.swing.JFrame {
         francaisTxtField.setForeground(new java.awt.Color(0, 0, 0));
         francaisTxtField.setRows(5);
         francaisTxtField.setToolTipText("Texte à traduire");
+        francaisTxtField.setBorder(javax.swing.BorderFactory.createTitledBorder("Texte en Français"));
         francaisTxtField.addInputMethodListener(new java.awt.event.InputMethodListener() {
             public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
             }
@@ -234,48 +310,41 @@ public class Interface extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(francaisTxtField);
 
-        bassaTxtField.setBackground(new java.awt.Color(255, 255, 255));
-        bassaTxtField.setColumns(20);
-        bassaTxtField.setFont(new java.awt.Font("Ebrima", 0, 14)); // NOI18N
-        bassaTxtField.setForeground(new java.awt.Color(0, 0, 0));
-        bassaTxtField.setRows(5);
-        bassaTxtField.setAutoscrolls(false);
-        bassaTxtField.setBorder(javax.swing.BorderFactory.createTitledBorder("Traduction Bassa"));
-        jScrollPane2.setViewportView(bassaTxtField);
+        translateTxtField.setEditable(false);
+        translateTxtField.setBackground(new java.awt.Color(255, 255, 255));
+        translateTxtField.setColumns(20);
+        translateTxtField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
+        translateTxtField.setForeground(new java.awt.Color(0, 0, 0));
+        translateTxtField.setRows(5);
+        translateTxtField.setBorder(javax.swing.BorderFactory.createTitledBorder("Texte traduit"));
+        jScrollPane3.setViewportView(translateTxtField);
 
-        BtnBassa.setText("Lire...");
-        BtnBassa.addActionListener(new java.awt.event.ActionListener() {
+        BtnLire.setText("Lire...");
+        BtnLire.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnBassaActionPerformed(evt);
-            }
-        });
-
-        yembaTxtField.setBackground(new java.awt.Color(255, 255, 255));
-        yembaTxtField.setColumns(20);
-        yembaTxtField.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
-        yembaTxtField.setForeground(new java.awt.Color(0, 0, 0));
-        yembaTxtField.setRows(5);
-        yembaTxtField.setBorder(javax.swing.BorderFactory.createTitledBorder("Traduction Yemba"));
-        jScrollPane3.setViewportView(yembaTxtField);
-
-        BtnYemba.setText("Lire...");
-        BtnYemba.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnYembaActionPerformed(evt);
+                BtnLireActionPerformed(evt);
             }
         });
 
         jLabel2.setText("Texte en Français  :");
 
-        volumeYemba.setPaintLabels(true);
-        volumeYemba.setPaintTicks(true);
-        volumeYemba.setToolTipText("Volume");
-        volumeYemba.setValue(0);
+        volumeTranslate.setPaintLabels(true);
+        volumeTranslate.setPaintTicks(true);
+        volumeTranslate.setToolTipText("Volume");
+        volumeTranslate.setValue(0);
 
-        volumeBassa.setPaintLabels(true);
-        volumeBassa.setPaintTicks(true);
-        volumeBassa.setToolTipText("Volume");
-        volumeBassa.setValue(0);
+        jLabel7.setText("Traduire en : ");
+
+        comboLangue.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- choisir la langue --" }));
+        comboLangue.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboLangueItemStateChanged(evt);
+            }
+        });
+
+        jLabel8.setText("Texte Traduit         :");
+
+        jLabel12.setText("Volume...");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -285,60 +354,65 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jSeparator1))
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 743, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(61, 61, 61)
+                        .addGap(51, 51, 51)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(BtnBassa)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(volumeBassa, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(61, 61, 61)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 130, Short.MAX_VALUE)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(157, 157, 157)
-                        .addComponent(BtnYemba)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(BtnLire)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(volumeYemba, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addComponent(volumeTranslate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(171, 171, 171))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboLangue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(225, 225, 225))))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(72, 72, 72)
-                        .addComponent(jLabel2)
-                        .addGap(53, 53, 53))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboLangue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(BtnYemba)
-                        .addComponent(BtnBassa))
-                    .addComponent(volumeYemba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(volumeBassa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(55, 55, 55)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BtnLire)
+                    .addComponent(volumeTranslate, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout panneauTraductionLayout = new javax.swing.GroupLayout(panneauTraduction);
@@ -392,7 +466,7 @@ public class Interface extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -404,7 +478,7 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        choixLangueCmb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sélectionner une langue", "Yemba", "Bassa" }));
+        choixLangueCmb.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sélectionner une langue" }));
         choixLangueCmb.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 choixLangueCmbItemStateChanged(evt);
@@ -528,6 +602,11 @@ public class Interface extends javax.swing.JFrame {
 
         jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem5.setText("Fermer");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem5);
 
         jMenuBar1.add(jMenu1);
@@ -542,6 +621,15 @@ public class Interface extends javax.swing.JFrame {
             }
         });
         jMenu2.add(jMenuItem2);
+
+        jMenuItem6.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem6.setText("+ Ajouter une langue");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem6);
 
         jMenuBar1.add(jMenu2);
 
@@ -567,7 +655,7 @@ public class Interface extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 432, Short.MAX_VALUE)
+            .addGap(0, 457, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -575,41 +663,27 @@ public class Interface extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void BtnBassaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBassaActionPerformed
-        if (!"".equals(bassaTxtField.getText())) {
-            if(volumeBassa.getValue() != 0){
-            BtnBassa.setEnabled(false);
-            readText(bassaTxtField.getText(), volumeBassa.getValue());
-            BtnBassa.setEnabled(true);
-            }
-            else{
-                JOptionPane.showMessageDialog(this, "Bien vouloir augmenter le volume"); 
-            }
-        }
-    }//GEN-LAST:event_BtnBassaActionPerformed
-
-    private void BtnYembaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnYembaActionPerformed
+    private void BtnLireActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLireActionPerformed
         // TODO add your handling code here:
         // lire en Yemba ŋ
-        if (!"".equals(yembaTxtField.getText())) {
-            if(volumeYemba.getValue() != 0){
-            BtnYemba.setEnabled(false);
-            readText(yembaTxtField.getText(), volumeYemba.getValue());
-            BtnYemba.setEnabled(true);
-            }
-            else{
-                JOptionPane.showMessageDialog(this, "Bien vouloir augmenter le volume"); 
+        if (!"".equals(translateTxtField.getText())) {
+            if (volumeTranslate.getValue() != 0) {
+                BtnLire.setEnabled(false);
+                readText(translateTxtField.getText(), volumeTranslate.getValue());
+                BtnLire.setEnabled(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Bien vouloir augmenter le volume");
             }
         }
 
 
-    }//GEN-LAST:event_BtnYembaActionPerformed
+    }//GEN-LAST:event_BtnLireActionPerformed
 
     private void francaisTxtFieldInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_francaisTxtFieldInputMethodTextChanged
         // TODO add your handling code here:
-        yembaTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confYemba));
+        translateTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confTraduction));
     }//GEN-LAST:event_francaisTxtFieldInputMethodTextChanged
-    
+
     private void readText(String text, int volume) {
         TextToSpeech tts = new TextToSpeech();
         //=========================================================================
@@ -626,7 +700,6 @@ public class Interface extends javax.swing.JFrame {
 //            System.out.println(audioEffect.getHelpText() + "\n\n");
 //
 //        });
-
         //=========================================================================
         //========================= Print available voices =========================
         //=========================================================================
@@ -652,7 +725,6 @@ public class Interface extends javax.swing.JFrame {
 //        //RobotiserEffect
 //        RobotiserEffect robotiserEffect = new RobotiserEffect();
 //        robotiserEffect.setParams("amount:50");
-
         //StadiumEffect
         StadiumEffect stadiumEffect = new StadiumEffect();
         stadiumEffect.setParams("amount:" + volume);
@@ -664,7 +736,6 @@ public class Interface extends javax.swing.JFrame {
 //        //VolumeEffect
 //        VolumeEffect volumeEffect = new VolumeEffect(); //be careful with this i almost got heart attack
 //        volumeEffect.setParams("amount:0");
-
         //Apply the effects
         //----You can add multiple effects by using the method `getFullEffectAsString()` and + symbol to connect with the other effect that you want
         //----check the example below
@@ -691,14 +762,11 @@ public class Interface extends javax.swing.JFrame {
     private void choixLangueCmbItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_choixLangueCmbItemStateChanged
         // TODO add your handling code here:
         Map<String, String> allData;
-        Object item = evt.getItem();
+        Object item = choixLangueCmb.getSelectedItem();
         tableMot.removeAll();
-        if (item.toString().equalsIgnoreCase("yemba")) {
-            allData = confYemba.loadAllIn();
-            parcourirBtn.setEnabled(true);
-            addWordBtn.setEnabled(true);
-        } else if (item.toString().equalsIgnoreCase("bassa")) {
-            allData = confBassa.loadAllIn();
+        if (choixLangueCmb.getSelectedIndex() != 0) {
+            confAjout = new Config("francais-" + item.toString().toLowerCase() + ".properties");
+            allData = confAjout.loadAllIn();
             parcourirBtn.setEnabled(true);
             addWordBtn.setEnabled(true);
         } else {
@@ -706,7 +774,6 @@ public class Interface extends javax.swing.JFrame {
             parcourirBtn.setEnabled(false);
             addWordBtn.setEnabled(false);
         }
-
         DefaultTableModel model = (DefaultTableModel) tableMot.getModel();
         model.getDataVector().removeAllElements();
         Set keys = allData.keySet();
@@ -727,23 +794,9 @@ public class Interface extends javax.swing.JFrame {
         Map<String, String> allData;
         String motFr = motFrancais.getText().toLowerCase();
         String motTr = motTraduit.getText().toLowerCase();
-        if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("yemba")) {
-            if (motFr.equalsIgnoreCase(confYemba.getPropertyIn(motFr))) {
-                confYemba.setPropertyIn(motFr, motTr);
-                System.out.println("get yemba de " + motFr + " = " + confYemba.getPropertyIn(motFr));
-            } else {
-                JOptionPane.showMessageDialog(this, "Ce mot existe déjà dans le dictionnaire");
-            }
-            allData = confYemba.loadAllIn();
-
-        } else if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("bassa")) {
-            if (motFr.equalsIgnoreCase(confBassa.getPropertyIn(motFr))) {
-                confBassa.setPropertyIn(motFr, motTr);
-                System.out.println("get yemba de " + motFr + " = " + confBassa.getPropertyIn(motFr));
-            } else {
-                JOptionPane.showMessageDialog(this, "Ce mot existe déjà dans le dictionnaire");
-            }
-            allData = confBassa.loadAllIn();
+        if (choixLangueCmb.getSelectedIndex() != 0) {
+            confAjout.setPropertyIn(motFr, motTr);
+            allData = confAjout.loadAllIn();
         } else {
             allData = new HashMap<>();
         }
@@ -769,29 +822,16 @@ public class Interface extends javax.swing.JFrame {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileToUpload), "UTF8"))) {
                 System.out.println("selected = " + choixLangueCmb.getSelectedItem());
                 String line;
-                if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("yemba")) {
-                    while ((line = br.readLine()) != null) {
-                        String[] tab = line.split("=");
-                        if (tab.length == 2) {
-                            confYemba.setPropertyIn(tab[0], tab[1]);
-                        } else {
-                            System.out.println("ligne " + line + " ignorée");
-                        }
+                while ((line = br.readLine()) != null) {
+                    String[] tab = line.split("=");
+                    if (tab.length == 2) {
+                        confAjout.setPropertyIn(tab[0], tab[1]);
+                    } else {
+                        System.out.println("ligne " + line + " ignorée");
                     }
-                    br.close();    //closes the stream and release the resources 
-                    allData = confYemba.loadAllIn();
-                } else if (choixLangueCmb.getSelectedItem().toString().equalsIgnoreCase("bassa")) {
-                    while ((line = br.readLine()) != null) {
-                        String[] tab = line.split("=");
-                        if (tab.length == 2) {
-                            confBassa.setPropertyIn(tab[0], tab[1]);
-                        } else {
-                            System.out.println("ligne " + line + " ignorée");
-                        }
-                    }
-                    br.close();
-                    allData = confBassa.loadAllIn();
                 }
+                br.close();    //closes the stream and release the resources 
+                allData = confAjout.loadAllIn();
                 DefaultTableModel model = (DefaultTableModel) tableMot.getModel();
                 model.getDataVector().removeAllElements();
                 Set keys = allData.keySet();
@@ -818,6 +858,7 @@ public class Interface extends javax.swing.JFrame {
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichier texte", "txt");
         FileNameExtensionFilter filter2 = new FileNameExtensionFilter("Fichier properties", "properties");
         jfc.setFileFilter(filter);
+        jfc.setFileFilter(filter2);
         int returnVal = jfc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = jfc.getSelectedFile();
@@ -829,7 +870,7 @@ public class Interface extends javax.swing.JFrame {
     private void francaisTxtFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_francaisTxtFieldKeyReleased
         // TODO add your handling code here:
 //        String motEnCours = "";
-        if (!"".equals(francaisTxtField.getText()) && !francaisTxtField.getText().endsWith(" ")) {
+        if (!"".equals(francaisTxtField.getText()) && !francaisTxtField.getText().endsWith(" ") && comboLangue.getSelectedIndex() != 0) {
             String[] tableauDesMots = francaisTxtField.getText().split(" ");
             String debutPhrase = "";
             for (int i = 0; i < tableauDesMots.length - 1; i++) {
@@ -864,6 +905,94 @@ public class Interface extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_francaisTxtFieldKeyReleased
+
+    private void comboLangueItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboLangueItemStateChanged
+        // TODO add your handling code here:
+
+        if (comboLangue.getSelectedIndex() != 0) {
+            String langue = comboLangue.getSelectedItem().toString();
+//                    evt.getItem().toString();
+            // set all words*
+            System.out.println("langue = " + langue);
+            confTraduction = new Config("francais-" + langue + ".properties");
+//            confTraduction.printAll();
+            allWordsWithTraduction = confTraduction.loadAllIn();
+            Set<String> set = new LinkedHashSet<>(allWordsWithTraduction.keySet());
+            allWords = new ArrayList<>(set);
+            if (francaisTxtField.getText() != "") {
+                translateTxtField.setText(StrUtils.translate(francaisTxtField.getText(), confTraduction));
+            }
+        }
+    }//GEN-LAST:event_comboLangueItemStateChanged
+
+    private void btnParcourirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnParcourirActionPerformed
+        // TODO add your handling code here:
+        JFileChooser jfc = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichier texte", "txt");
+        FileNameExtensionFilter filter2 = new FileNameExtensionFilter("Fichier properties", "properties");
+        jfc.setFileFilter(filter);
+        jfc.setFileFilter(filter2);
+        int returnVal = jfc.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = jfc.getSelectedFile();
+            fileToUpload = file.getAbsolutePath();
+            cheminAddLangueTxf.setText(fileToUpload);
+        }
+    }//GEN-LAST:event_btnParcourirActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+
+        dialogAddLangue.setLocationRelativeTo(this);
+//        dialogAddLangue.setAlwaysOnTop(true);
+        dialogAddLangue.setSize(500, 200);
+        dialogAddLangue.setVisible(true);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void btnAddLangueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddLangueActionPerformed
+        // TODO add your handling code here:
+        if (!"".equals(nomLangueTxf.getText()) && !"".equals(cheminAddLangueTxf.getText())) {
+            if (allLanguages.containsKey(nomLangueTxf.getText().toLowerCase())) {
+                JOptionPane.showMessageDialog(this, "Cette Langue existe déjà !!!");
+            } else {
+                OutputStream output = null;
+                try {
+                    conf.setPropertyIn(nomLangueTxf.getText().toLowerCase(), nomLangueTxf.getText().toLowerCase());
+                    Properties props;
+                    output = new FileOutputStream("francais-" + nomLangueTxf.getText().toLowerCase() + ".properties");
+                    try (InputStream in = new FileInputStream("francais-" + nomLangueTxf.getText().toLowerCase() + ".properties")) {
+                        props = new Properties();
+                        props.load(new InputStreamReader(in, "UTF-8"));
+                        Properties p = new Properties();
+                        p.load(new InputStreamReader(new FileInputStream(cheminAddLangueTxf.getText()), "UTF-8"));
+                        p.forEach((Object key, Object value) -> {
+                            props.setProperty((String) key, (String) value);
+                        });
+                        props.store(output, null);
+                        output.close();
+                        JOptionPane.showMessageDialog(this, "Nouvelle langue ajoutée avec succès !!!");
+                    } catch (IOException ex) {
+                        Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        output.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+            }
+        }
+    }//GEN-LAST:event_btnAddLangueActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -901,21 +1030,29 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BtnBassa;
+    private javax.swing.JButton BtnLire;
     private javax.swing.JButton BtnRetour;
-    private javax.swing.JButton BtnYemba;
     private javax.swing.JButton addWordBtn;
-    private javax.swing.JTextArea bassaTxtField;
+    private javax.swing.JButton btnAddLangue;
+    private javax.swing.JButton btnParcourir;
+    private javax.swing.JTextField cheminAddLangueTxf;
     private javax.swing.JComboBox<String> choixLangueCmb;
+    private javax.swing.JComboBox<String> comboLangue;
+    private javax.swing.JDialog dialogAddLangue;
     private javax.swing.JTextField fileToImportTxf;
     private javax.swing.JTextArea francaisTxtField;
     private javax.swing.JButton importbtn;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -926,24 +1063,24 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField motFrancais;
     private javax.swing.JTextField motTraduit;
+    private javax.swing.JTextField nomLangueTxf;
     private javax.swing.JPanel panneauAdmin;
     private javax.swing.JPanel panneauTraduction;
     private javax.swing.JButton parcourirBtn;
     private javax.swing.JPopupMenu popupmenu;
     private javax.swing.JTable tableMot;
-    private javax.swing.JSlider volumeBassa;
-    private javax.swing.JSlider volumeYemba;
-    private javax.swing.JTextArea yembaTxtField;
+    private javax.swing.JTextArea translateTxtField;
+    private javax.swing.JSlider volumeTranslate;
     // End of variables declaration//GEN-END:variables
 }
